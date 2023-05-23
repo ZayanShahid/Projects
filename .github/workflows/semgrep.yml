@@ -1,22 +1,24 @@
-
-# Name of this GitHub Actions workflow.
-name: Semgrep
 on:
-  pull_request: {}
   workflow_dispatch: {}
+  pull_request: {}
   push:
-    branches: ["master", "main"]
+    branches:
+    - main
+    - master
+    paths:
+    - .github/workflows/semgrep.yml
   schedule:
-    - cron: '20 17 * * *' # Sets Semgrep to scan every day at 17:20 UTC.
+  # random HH:MM to avoid a load spike on GitHub Actions at 00:00
+  - cron: 40 17 * * *
+name: Semgrep
 jobs:
   semgrep:
     name: semgrep/ci
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
+    env:
+      SEMGREP_APP_TOKEN: ${{ secrets.SEMGREP_APP_TOKEN }}
     container:
       image: returntocorp/semgrep
-    if: (github.actor != 'dependabot[bot]')
     steps:
-      - uses: actions/checkout@v3
-      - run: semgrep ci || true
-        env:
-           SEMGREP_RULES: p/default # more at semgrep.dev/explore
+    - uses: actions/checkout@v3
+    - run: semgrep ci
