@@ -15,13 +15,13 @@ jobs:
       with:
         dotnet-version: 6.0.x
     - name: Build
-      run: dotnet build . --output buildOutput
+      run: dotnet build . --output json
       
     - name: Generate SBOM
       run: |
         curl -Lo $RUNNER_TEMP/sbom-tool https://github.com/microsoft/sbom-tool/releases/latest/download/sbom-tool-linux-x64
         chmod +x $RUNNER_TEMP/sbom-tool
-        $RUNNER_TEMP/sbom-tool generate -b ./buildOutput -bc . -pn Test -pv 1.0.0 -ps MyCompany -nsb https://sbom.mycompany.com -V Verbose
+        $RUNNER_TEMP/sbom-tool generate -b . -bc . -pn Test -pv 1.0.0 -ps MyCompany -nsb https://sbom.mycompany.com -V Verbose
 
     - name: Upload a Build Artifact
       uses: actions/upload-artifact@v3.1.0
